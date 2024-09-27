@@ -134,7 +134,7 @@ services:
     <<: *backend
     env_file:
       - .env
-    command: /bin/sh -c "python -m celery -A langflow.worker.celery_app worker --loglevel=INFO --concurrency=1 -n lf-worker@%h -P eventlet"
+    command: /bin/sh -c "pip install gevent && python -m celery -A langflow.worker.celery_app worker --loglevel=INFO --concurrency=1 -n lf-worker@%h -P gevent"
     healthcheck:
       test: "exit 0"
     deploy:
