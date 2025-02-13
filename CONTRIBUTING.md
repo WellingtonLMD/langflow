@@ -6,7 +6,6 @@ to contributions, whether it be in the form of a new feature, improved infra, or
 
 To contribute to this project, please follow the [fork and pull request](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) workflow.
 
-
 ## Reporting bugs or suggesting improvements
 
 Our [GitHub issues](https://github.com/langflow-ai/langflow/issues) page is kept up to date
@@ -32,80 +31,14 @@ so that more people can benefit from it.
   [collapses the content](https://developer.mozilla.org/en/docs/Web/HTML/Element/details)
   so it only becomes visible on click, making the issue easier to read and follow.
 
-
 ## Contributing code and documentation
 
-You can develop Langflow locally via Poetry + NodeJS or docker-compose.
+You can develop Langflow locally and contribute to the Project!
 
-### Clone the Langflow Repository
-
-Navigate to the [Langflow GitHub repository](https://github.com/langflow-ai/langflow) and press "Fork" in the upper right-hand corner.
-
-Add the new remote to your local repository on your local machine:
-
-```bash
-git remote add fork https://github.com/<your username>/langflow.git
-```
-
-We also provide a .vscode/launch.json file for debugging the backend in VSCode, which is a lot faster than using docker compose.
-
-### Prepare the environment
-Setting up hooks:
-
-```bash
-make init
-```
-
-This will install the pre-commit hooks, which will run `make format` on every commit.
-
-It is advised to run `make lint` before pushing to the repository.
-
-### Run locally (Poetry and Node.js)
-
-Langflow can run locally by cloning the repository and installing the dependencies. We recommend using a virtual environment to isolate the dependencies from your system.
-
-Before you start, make sure you have the following installed:
-
-- Poetry (>=1.4)
-- Node.js
-
-Then, in the root folder, install the dependencies and start the development server for the backend:
-
-```bash
-make backend
-```
-
-And the frontend:
-
-```bash
-make frontend
-```
-
-
-### Run locally (docker compose)
-
-The following snippet will run the backend and frontend in separate containers. The frontend will be available at `localhost:3000` and the backend at `localhost:7860`.
-
-```bash
-docker compose up --build
-# or
-make dev build=1
-```
-
-### Run documentation
-
-The documentation is built using [Docusaurus](https://docusaurus.io/). To run the documentation locally, run the following commands:
-
-```bash
-cd docs
-npm install
-npm run start
-```
-
-The documentation will be available at `localhost:3000` and all the files are located in the `docs/docs` folder.
-
+See [DEVELOPMENT.md](DEVELOPMENT.md) for instructions on setting up and using a development environment.
 
 ## Opening a pull request
+
 Once you wrote and manually tested your change, you can start sending the patch to the main repository.
 
 - Open a new GitHub pull request with the patch against the `main` branch.

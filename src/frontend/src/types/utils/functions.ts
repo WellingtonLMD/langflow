@@ -1,3 +1,5 @@
+import { FieldParserType, FieldValidatorType } from "../api";
+
 export type getCodesObjProps = {
   runCurlCode: string;
   webhookCurlCode: string;
@@ -16,10 +18,15 @@ export enum FormatterType {
   json = "json",
 }
 
-export type ColumnField = {
-  display_name: string;
+export interface ColumnField {
   name: string;
+  display_name: string;
   sortable: boolean;
   filterable: boolean;
   formatter?: FormatterType;
-};
+  description?: string;
+  disable_edit?: boolean;
+  default?: any;
+  edit_mode?: "modal" | "inline" | "popover";
+  hidden?: boolean;
+}

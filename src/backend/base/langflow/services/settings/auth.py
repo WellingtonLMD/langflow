@@ -5,7 +5,7 @@ from typing import Literal
 from loguru import logger
 from passlib.context import CryptContext
 from pydantic import Field, SecretStr, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from langflow.services.settings.constants import DEFAULT_SUPERUSER, DEFAULT_SUPERUSER_PASSWORD
 from langflow.services.settings.utils import read_secret_from_file, write_secret_to_file
@@ -52,12 +52,9 @@ class AuthSettings(BaseSettings):
 
     pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    class Config:
-        validate_assignment = True
-        extra = "ignore"
-        env_prefix = "LANGFLOW_"
+    model_config = SettingsConfigDict(validate_assignment=True, extra="ignore", env_prefix="LANGFLOW_")
 
-    def reset_credentials(self):
+    def reset_credentials(self) -> None:
         self.SUPERUSER = DEFAULT_SUPERUSER
         self.SUPERUSER_PASSWORD = DEFAULT_SUPERUSER_PASSWORD
 
@@ -110,4 +107,4 @@ class AuthSettings(BaseSettings):
                 write_secret_to_file(secret_key_path, value)
                 logger.debug("Saved secret key")
 
-        return value if isinstance(value, SecretStr) else SecretStr(value)
+        return value if isinstance(value, SecretStr) else SecretStr(value).get_secret_value()

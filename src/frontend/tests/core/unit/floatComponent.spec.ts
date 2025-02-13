@@ -1,143 +1,86 @@
 import { expect, test } from "@playwright/test";
+import { adjustScreenView } from "../../utils/adjust-screen-view";
+import { awaitBootstrapTest } from "../../utils/await-bootstrap-test";
 
-test("FloatComponent", async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('[data-testid="mainpage_title"]', {
-    timeout: 30000,
-  });
+test(
+  "FloatComponent",
+  { tag: ["@release", "@workspace"] },
+  async ({ page }) => {
+    await awaitBootstrapTest(page);
 
-  await page.waitForSelector('[id="new-project-btn"]', {
-    timeout: 30000,
-  });
+    await page.waitForSelector('[data-testid="blank-flow"]', {
+      timeout: 30000,
+    });
+    await page.getByTestId("blank-flow").click();
+    await page.getByTestId("sidebar-search-input").click();
+    await page.getByTestId("sidebar-search-input").fill("nvidia");
 
-  let modalCount = 0;
-  try {
-    const modalTitleElement = await page?.getByTestId("modal-title");
-    if (modalTitleElement) {
-      modalCount = await modalTitleElement.count();
-    }
-  } catch (error) {
-    modalCount = 0;
-  }
+    await page.waitForSelector('[data-testid="modelsNVIDIA"]', {
+      timeout: 30000,
+    });
 
-  while (modalCount === 0) {
-    await page.getByText("New Project", { exact: true }).click();
-    await page.waitForTimeout(3000);
-    modalCount = await page.getByTestId("modal-title")?.count();
-  }
-  await page.waitForSelector('[data-testid="blank-flow"]', {
-    timeout: 30000,
-  });
-  await page.getByTestId("blank-flow").click();
-  await page.waitForSelector('[data-testid="extended-disclosure"]', {
-    timeout: 30000,
-  });
-  await page.getByTestId("extended-disclosure").click();
-  await page.getByPlaceholder("Search").click();
-  await page.getByPlaceholder("Search").fill("ollama");
+    await page
+      .getByTestId("modelsNVIDIA")
+      .hover()
+      .then(async () => {
+        await page.getByTestId("add-component-button-nvidia").click();
+      });
 
-  await page.waitForTimeout(1000);
+    await page.getByTestId("title-NVIDIA").click();
 
-  await page
-    .getByTestId("modelsOllama")
-    .dragTo(page.locator('//*[@id="react-flow-id"]'));
-  await page.mouse.up();
-  await page.mouse.down();
-  await page.getByTitle("fit view").click();
-  await page.getByTitle("zoom out").click();
-  await page.getByTitle("zoom out").click();
-  await page.getByTitle("zoom out").click();
-
-  await page.waitForTimeout(1000);
-  await page.locator('//*[@id="float-input"]').click();
-  await page.locator('//*[@id="float-input"]').fill("");
-  await page.waitForTimeout(1000);
-  await page.locator('//*[@id="float-input"]').fill("3");
-
-  let value = await page.locator('//*[@id="float-input"]').inputValue();
-
-  if (value != "2") {
-    expect(false).toBeTruthy();
-  }
-
-  await page.waitForTimeout(1000);
-  await page.locator('//*[@id="float-input"]').click();
-  await page.locator('//*[@id="float-input"]').fill("");
-  await page.waitForTimeout(1000);
-  await page.locator('//*[@id="float-input"]').fill("-3");
-
-  value = await page.locator('//*[@id="float-input"]').inputValue();
-
-  if (value != "-2") {
-    expect(false).toBeTruthy();
-  }
-
-  await page.getByTestId("more-options-modal").click();
-  await page.getByTestId("edit-button-modal").click();
-
-  await page.getByTestId("showmirostat_eta").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_eta"]').isChecked(),
-  ).toBeTruthy();
-
-  await page.getByTestId("showmirostat_eta").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_eta"]').isChecked(),
-  ).toBeFalsy();
-
-  await page.getByTestId("showmirostat_eta").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_eta"]').isChecked(),
-  ).toBeTruthy();
-
-  await page.getByTestId("showmirostat_eta").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_eta"]').isChecked(),
-  ).toBeFalsy();
-
-  await page.getByTestId("showmirostat_tau").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_tau"]').isChecked(),
-  ).toBeTruthy();
-
-  await page.getByTestId("showmirostat_tau").click();
-  expect(
-    await page.locator('//*[@id="showmirostat_tau"]').isChecked(),
-  ).toBeFalsy();
-
-  await page.getByText("Close").last().click();
-
-  const plusButtonLocator = page.locator('//*[@id="float-input"]');
-  const elementCount = await plusButtonLocator?.count();
-  if (elementCount === 0) {
-    expect(true).toBeTruthy();
-
-    await page.getByTestId("more-options-modal").click();
     await page.getByTestId("edit-button-modal").click();
 
-    // showtemperature
-    await page.locator('//*[@id="showtemperature"]').click();
-    expect(
-      await page.locator('//*[@id="showtemperature"]').isChecked(),
-    ).toBeTruthy();
+    await page.getByTestId("showseed").click();
 
     await page.getByText("Close").last().click();
-    await page.locator('//*[@id="float-input"]').click();
-    await page.locator('//*[@id="float-input"]').fill("3");
 
-    let value = await page.locator('//*[@id="float-input"]').inputValue();
+    await page.locator('//*[@id="int_int_seed"]').click();
+    await page.locator('//*[@id="int_int_seed"]').fill("");
+    await page.locator('//*[@id="int_int_seed"]').fill("3");
 
-    if (value != "1") {
-      expect(false).toBeTruthy();
+    let value = await page.locator('//*[@id="int_int_seed"]').inputValue();
+
+    expect(value).toBe("3");
+
+    await page.locator('//*[@id="int_int_seed"]').click();
+    await page.locator('//*[@id="int_int_seed"]').fill("");
+    await page.locator('//*[@id="int_int_seed"]').fill("-3");
+
+    value = await page.locator('//*[@id="int_int_seed"]').inputValue();
+
+    expect(value).toBe("-3");
+
+    await page.getByTestId("more-options-modal").click();
+    await page.getByTestId("advanced-button-modal").click();
+
+    await page.getByText("Close").last().click();
+
+    const plusButtonLocator = page.locator('//*[@id="int_int_edit_seed"]');
+    const elementCount = await plusButtonLocator?.count();
+    if (elementCount === 0) {
+      expect(true).toBeTruthy();
+
+      await page.getByTestId("more-options-modal").click();
+      await page.getByTestId("advanced-button-modal").click();
+
+      await page.getByText("Close").last().click();
+      await page.locator('//*[@id="int_int_seed"]').click();
+      await page.getByTestId("int_int_seed").fill("");
+
+      await page.locator('//*[@id="int_int_seed"]').fill("3");
+
+      let value = await page.locator('//*[@id="int_int_seed"]').inputValue();
+
+      expect(value).toBe("3");
+
+      await page.locator('//*[@id="int_int_seed"]').click();
+      await page.getByTestId("int_int_seed").fill("");
+
+      await page.locator('//*[@id="int_int_seed"]').fill("-3");
+
+      value = await page.locator('//*[@id="int_int_seed"]').inputValue();
+
+      expect(value).toBe("-3");
     }
-
-    await page.locator('//*[@id="float-input"]').click();
-    await page.locator('//*[@id="float-input"]').fill("-3");
-
-    value = await page.locator('//*[@id="float-input"]').inputValue();
-
-    if (value != "-1") {
-      expect(false).toBeTruthy();
-    }
-  }
-});
+  },
+);

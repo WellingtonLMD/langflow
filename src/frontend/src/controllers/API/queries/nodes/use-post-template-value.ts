@@ -1,6 +1,5 @@
 import {
   APIClassType,
-  APITemplateType,
   ResponseErrorDetailAPI,
   useMutationFunctionType,
 } from "@/types/api";
@@ -11,6 +10,7 @@ import { UseRequestProcessor } from "../../services/request-processor";
 
 interface IPostTemplateValue {
   value: any;
+  tool_mode?: boolean;
 }
 
 interface IPostTemplateValueParams {
@@ -22,18 +22,17 @@ interface IPostTemplateValueParams {
 export const usePostTemplateValue: useMutationFunctionType<
   IPostTemplateValueParams,
   IPostTemplateValue,
-  APITemplateType | undefined,
+  APIClassType,
   ResponseErrorDetailAPI
 > = ({ parameterId, nodeId, node }, options?) => {
   const { mutate } = UseRequestProcessor();
 
   const postTemplateValueFn = async (
     payload: IPostTemplateValue,
-  ): Promise<APITemplateType | undefined> => {
+  ): Promise<APIClassType | undefined> => {
     const template = node.template;
 
     if (!template) return;
-
     const response = await api.post<APIClassType>(
       getURL("CUSTOM_COMPONENT", { update: "update" }),
       {
@@ -41,14 +40,15 @@ export const usePostTemplateValue: useMutationFunctionType<
         template: template,
         field: parameterId,
         field_value: payload.value,
+        tool_mode: payload.tool_mode,
       },
     );
 
-    return response.data.template;
+    return response.data;
   };
 
   const mutation: UseMutationResult<
-    APITemplateType | undefined,
+    APIClassType,
     ResponseErrorDetailAPI,
     IPostTemplateValue
   > = mutate(

@@ -1,23 +1,30 @@
+import TableAutoCellRender from "@/components/core/parameterRenderComponent/components/tableComponent/components/tableAutoCellRender";
+import useAlertStore from "@/stores/alertStore";
 import { ColumnField, FormatterType } from "@/types/utils/functions";
-import { ColDef, ColGroupDef } from "ag-grid-community";
+import { ColDef, ColGroupDef, ValueParserParams } from "ag-grid-community";
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import TableAutoCellRender from "../components/tableComponent/components/tableAutoCellRender";
 import {
   DRAG_EVENTS_CUSTOM_TYPESS,
   MESSAGES_TABLE_ORDER,
   MODAL_CLASSES,
   SHORTCUT_KEYS,
 } from "../constants/constants";
-import { APIDataType, InputFieldType, VertexDataTypeAPI } from "../types/api";
+import {
+  APIDataType,
+  InputFieldType,
+  TableOptionsTypeAPI,
+  VertexDataTypeAPI,
+} from "../types/api";
 import {
   groupedObjType,
   nodeGroupedObjType,
   tweakType,
 } from "../types/components";
-import { NodeDataType, NodeType } from "../types/flow";
+import { AllNodeType, NodeDataType } from "../types/flow";
 import { FlowState } from "../types/tabs";
 import { isErrorLog } from "../types/utils/typeCheckingUtils";
+import { parseString } from "./stringManipulation";
 
 export function classNames(...classes: Array<string>): string {
   return classes.filter(Boolean).join(" ");
@@ -25,6 +32,13 @@ export function classNames(...classes: Array<string>): string {
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
+}
+
+export function toCamelCase(str: string): string {
+  return str
+    .split(" ")
+    .map((s, index) => (index !== 0 ? toNormalCase(s) : s.toLowerCase()))
+    .join("");
 }
 
 export function toNormalCase(str: string): string {
@@ -115,6 +129,12 @@ export function getRandomKeyByssmm(): string {
   return seconds + milliseconds + Math.abs(Math.floor(Math.random() * 10001));
 }
 
+export function getNumberFromString(str: string): number {
+  const hash = str.split("").reduce((acc, char) => {
+    return char.charCodeAt(0) + acc;
+  }, 0);
+  return hash;
+}
 export function buildTweakObject(tweak: tweakType) {
   tweak.forEach((el) => {
     Object.keys(el).forEach((key) => {
@@ -224,7 +244,7 @@ export function groupByFamily(
   data: APIDataType,
   baseClasses: string,
   left: boolean,
-  flow?: NodeType[],
+  flow?: AllNodeType[],
 ): groupedObjType[] {
   const baseClassesSet = new Set(baseClasses.split("\n"));
   let arrOfPossibleInputs: Array<{
@@ -259,7 +279,12 @@ export function groupByFamily(
     // se existir o flow
     for (const node of flow) {
       // para cada node do flow
-      if (node!.data!.node!.flow || !node!.data!.node!.template) break; // não faz nada se o node for um group
+      if (
+        node!.type !== "genericNode" ||
+        !node!.data!.node!.flow ||
+        !node!.data!.node!.template
+      )
+        break; // não faz nada se o node for um group
       const nodeData = node.data;
 
       const foundNode = checkedNodes.get(nodeData.type); // verifica se o tipo do node já foi checado
@@ -435,39 +460,42 @@ export const logHasMessage = (
   data: VertexDataTypeAPI,
   outputName: string | undefined,
 ) => {
-  if (!outputName) return;
-  const outputs = data?.outputs[outputName];
-  if (Array.isArray(outputs) && outputs.length > 1) {
-    return outputs.some((outputLog) => outputLog.message);
-  } else {
-    return outputs?.message;
+  if (!outputName || !data?.outputs) return false;
+  const outputs = data.outputs[outputName];
+  if (!outputs) return false;
+
+  if (Array.isArray(outputs) && outputs.length > 0) {
+    return outputs.some((outputLog) => outputLog?.message);
   }
+  return outputs?.message;
 };
 
 export const logTypeIsUnknown = (
   data: VertexDataTypeAPI,
   outputName: string | undefined,
 ) => {
-  if (!outputName) return;
-  const outputs = data?.outputs[outputName];
-  if (Array.isArray(outputs) && outputs.length > 1) {
-    return outputs.some((outputLog) => outputLog.type === "unknown");
-  } else {
-    return outputs?.type === "unknown";
+  if (!outputName || !data?.outputs) return false;
+  const outputs = data.outputs[outputName];
+  if (!outputs) return false;
+
+  if (Array.isArray(outputs) && outputs.length > 0) {
+    return outputs.some((outputLog) => outputLog?.type === "unknown");
   }
+  return outputs?.type === "unknown";
 };
 
 export const logTypeIsError = (
   data: VertexDataTypeAPI,
   outputName: string | undefined,
 ) => {
-  if (!outputName) return;
-  const outputs = data?.outputs[outputName];
-  if (Array.isArray(outputs) && outputs.length > 1) {
+  if (!outputName || !data?.outputs) return false;
+  const outputs = data.outputs[outputName];
+  if (!outputs) return false;
+
+  if (Array.isArray(outputs) && outputs.length > 0) {
     return outputs.some((log) => isErrorLog(log));
-  } else {
-    return isErrorLog(outputs);
   }
+  return isErrorLog(outputs);
 };
 
 export function isEndpointNameValid(name: string, maxLength: number): boolean {
@@ -496,12 +524,36 @@ export function brokenEdgeMessage({
 export function FormatColumns(columns: ColumnField[]): ColDef<any>[] {
   if (!columns) return [];
   const basic_types = new Set(["date", "number"]);
-  const colDefs = columns.map((col, index) => {
+  const colDefs = columns.map((col) => {
     let newCol: ColDef = {
       headerName: col.display_name,
       field: col.name,
       sortable: col.sortable,
       filter: col.filterable,
+      context: col.description ? { info: col.description } : {},
+      cellClass: col.disable_edit ? "cell-disable-edit" : "",
+      hide: col.hidden,
+      valueParser: (params: ValueParserParams) => {
+        const { context, newValue, colDef, oldValue } = params;
+        if (
+          context.field_parsers &&
+          context.field_parsers[colDef.field ?? ""]
+        ) {
+          try {
+            return parseString(
+              newValue,
+              context.field_parsers[colDef.field ?? ""],
+            );
+          } catch (error: any) {
+            useAlertStore.getState().setErrorData({
+              title: "Error parsing string",
+              list: [String(error.message ?? error)],
+            });
+            return oldValue;
+          }
+        }
+        return newValue;
+      },
     };
     if (!col.formatter) {
       col.formatter = FormatterType.text;
@@ -512,7 +564,19 @@ export function FormatColumns(columns: ColumnField[]): ColDef<any>[] {
       newCol.cellRendererParams = {
         formatter: col.formatter,
       };
-      newCol.cellRenderer = TableAutoCellRender;
+      if (col.formatter !== FormatterType.text || col.edit_mode !== "inline") {
+        if (col.edit_mode === "popover") {
+          newCol.wrapText = false;
+          newCol.autoHeight = false;
+          newCol.cellEditor = "agLargeTextCellEditor";
+          newCol.cellEditorPopup = true;
+          newCol.cellEditorParams = {
+            maxLength: 100000000,
+          };
+        } else {
+          newCol.cellRenderer = TableAutoCellRender;
+        }
+      }
     }
     return newCol;
   });
@@ -520,15 +584,30 @@ export function FormatColumns(columns: ColumnField[]): ColDef<any>[] {
   return colDefs;
 }
 
-export function generateBackendColumnsFromValue(rows: Object[]): ColumnField[] {
+export function generateBackendColumnsFromValue(
+  rows: Object[],
+  tableOptions?: TableOptionsTypeAPI,
+): ColumnField[] {
   const columns = extractColumnsFromRows(rows, "union");
   return columns.map((column) => {
     const newColumn: ColumnField = {
       name: column.field ?? "",
       display_name: column.headerName ?? "",
-      sortable: true,
-      filterable: true,
+      sortable: !tableOptions?.block_sort,
+      filterable: !tableOptions?.block_filter,
+      default: null, // Initialize default to null or appropriate value
+      hidden: false,
     };
+
+    // Attempt to infer the default value from the data, if possible
+    if (rows.length > 0) {
+      const sampleValue = rows[0][column.field ?? ""];
+      if (sampleValue !== undefined) {
+        newColumn.default = sampleValue;
+      }
+    }
+
+    // Determine the formatter based on the sample value
     if (rows[0] && rows[0][column.field ?? ""]) {
       const value = rows[0][column.field ?? ""] as any;
       if (typeof value === "string") {
@@ -538,7 +617,6 @@ export function generateBackendColumnsFromValue(rows: Object[]): ColumnField[] {
           newColumn.formatter = FormatterType.text;
         }
       } else if (typeof value === "object" && value !== null) {
-        // Check if the object is a Date object
         if (
           Object.prototype.toString.call(value) === "[object Date]" ||
           value instanceof Date
@@ -623,6 +701,18 @@ export function addPlusSignes(array: string[]): string[] {
   });
 }
 
+export function removeDuplicatesBasedOnAttribute<T>(
+  arr: T[],
+  attribute: string,
+): T[] {
+  const seen = new Set();
+  const filteredChatHistory = arr.filter((item) => {
+    const duplicate = seen.has(item[attribute]);
+    seen.add(item[attribute]);
+    return !duplicate;
+  });
+  return filteredChatHistory;
+}
 export function isSupportedNodeTypes(type: string) {
   return Object.keys(DRAG_EVENTS_CUSTOM_TYPESS).some((key) => key === type);
 }
@@ -630,3 +720,36 @@ export function isSupportedNodeTypes(type: string) {
 export function getNodeRenderType(MIMEtype: string) {
   return DRAG_EVENTS_CUSTOM_TYPESS[MIMEtype];
 }
+
+export const formatPlaceholderName = (name) => {
+  const formattedName = name
+    .split("_")
+    .map((word: string) => word.toLowerCase())
+    .join(" ");
+
+  const firstWord = formattedName.split(" ")[0];
+  const prefix = /^[aeiou]/i.test(firstWord) ? "an" : "a";
+
+  return `Select ${prefix} ${formattedName}`;
+};
+
+export const formatName = (name) => {
+  const formattedName = name
+    .split("_")
+    .map((word: string) => word.toLowerCase())
+    .join(" ");
+
+  const firstWord =
+    formattedName.split(" ")[0].charAt(0).toUpperCase() +
+    formattedName.split(" ")[0].slice(1);
+
+  return { formattedName, firstWord };
+};
+
+export const isStringArray = (value: unknown): value is string[] => {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+};
+
+export const stringToBool = (str) => (str === "false" ? false : true);

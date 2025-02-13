@@ -23,7 +23,7 @@ class BaseMemoryComponent(CustomComponent):
             "session_id": {
                 "display_name": "Session ID",
                 "info": "Session ID of the chat history.",
-                "input_types": ["Text"],
+                "input_types": ["Message"],
             },
             "order": {
                 "options": ["Ascending", "Descending"],
@@ -34,7 +34,8 @@ class BaseMemoryComponent(CustomComponent):
             "data_template": {
                 "display_name": "Data Template",
                 "multiline": True,
-                "info": "Template to convert Data to Text. If left empty, it will be dynamically set to the Data's text key.",
+                "info": "Template to convert Data to Text. "
+                "If left empty, it will be dynamically set to the Data's text key.",
                 "advanced": True,
             },
         }
@@ -44,5 +45,5 @@ class BaseMemoryComponent(CustomComponent):
 
     def add_message(
         self, sender: str, sender_name: str, text: str, session_id: str, metadata: dict | None = None, **kwargs
-    ):
+    ) -> None:
         raise NotImplementedError
