@@ -1,4 +1,4 @@
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import PlenumLogo from "@/assets/PlenumLogo.svg?react";
 import ChainLogo from "@/assets/logo.svg?react";
 import { TextEffectPerChar } from "@/components/ui/textAnimation";
 import { ENABLE_NEW_LOGO } from "@/customization/feature-flags";
@@ -180,13 +180,13 @@ export default function ChatView({
             <div className="flex h-full w-full flex-col items-center justify-center">
               <div className="flex flex-col items-center justify-center gap-4 p-8">
                 {ENABLE_NEW_LOGO ? (
-                  <LangflowLogo
-                    title="Langflow logo"
+                  <PlenumLogo
+                    title="Plenum logo"
                     className="h-10 w-10 scale-[1.5]"
                   />
                 ) : (
                   <ChainLogo
-                    title="Langflow logo"
+                    title="Plenum logo"
                     className="h-10 w-10 scale-[1.5]"
                   />
                 )}

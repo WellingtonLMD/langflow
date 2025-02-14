@@ -1,6 +1,6 @@
 export const ENABLE_DARK_MODE = true;
 export const ENABLE_API = true;
-export const ENABLE_LANGFLOW_STORE = true;
+export const ENABLE_AUTOMATION_BUILDER_STORE = true;
 export const ENABLE_PROFILE_ICONS = true;
 export const ENABLE_SOCIAL_LINKS = true;
 export const ENABLE_BRANDING = true;
@@ -8,5 +8,5 @@ export const ENABLE_MVPS = false;
 export const ENABLE_CUSTOM_PARAM = false;
 export const ENABLE_INTEGRATIONS = false;
 export const ENABLE_NEW_LOGO = true;
-export const ENABLE_DATASTAX_LANGFLOW = false;
+export const ENABLE_PLENUM_AUTOMATION_BUILDER = false;
 export const ENABLE_HOMEPAGE = true;

@@ -1,6 +1,6 @@
 import AlertDropdown from "@/alerts/alertDropDown";
 import DataStaxLogo from "@/assets/DataStaxLogo.svg?react";
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import PlenumLogo from "@/assets/PlenumLogo.svg?react";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
 import { CustomProductSelector } from "@/customization/components/custom-product-selector";
 import {
-  ENABLE_DATASTAX_LANGFLOW,
+  ENABLE_PLENUM_AUTOMATION_BUILDER,
   ENABLE_NEW_LOGO,
 } from "@/customization/feature-flags";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
@@ -65,15 +65,15 @@ export default function AppHeader(): JSX.Element {
           className="mr-1 flex h-8 w-8 items-center"
           data-testid="icon-ChevronLeft"
         >
-          {ENABLE_DATASTAX_LANGFLOW ? (
+          {ENABLE_PLENUM_AUTOMATION_BUILDER ? (
             <DataStaxLogo className="fill-black dark:fill-[white]" />
           ) : ENABLE_NEW_LOGO ? (
-            <LangflowLogo className="h-5 w-6" />
+            <PlenumLogo className="h-5 w-6" />
           ) : (
             <span className="fill-black text-2xl dark:fill-white">⛓️</span>
           )}
         </Button>
-        {ENABLE_DATASTAX_LANGFLOW && (
+        {ENABLE_PLENUM_AUTOMATION_BUILDER && (
           <>
             <CustomOrgSelector />
             <CustomProductSelector />
@@ -91,7 +91,7 @@ export default function AppHeader(): JSX.Element {
         className={`flex items-center gap-2`}
         data-testid="header_right_section_wrapper"
       >
-        {!ENABLE_DATASTAX_LANGFLOW && (
+        {!ENABLE_PLENUM_AUTOMATION_BUILDER && (
           <>
             <Button
               unstyled
@@ -100,7 +100,7 @@ export default function AppHeader(): JSX.Element {
                 window.open("https://github.com/langflow-ai/langflow", "_blank")
               }
             >
-              <GithubStarComponent />
+              {/* <GithubStarComponent /> */}
             </Button>
           </>
         )}
@@ -143,10 +143,10 @@ export default function AppHeader(): JSX.Element {
             </AlertDropdown>
           </ShadTooltip>
         </AlertDropdown>
-        {!ENABLE_DATASTAX_LANGFLOW && (
+        {!ENABLE_PLENUM_AUTOMATION_BUILDER && (
           <>
             <ShadTooltip
-              content="Go to LangflowStore"
+              content="Go to Automation Builder Store"
               side="bottom"
               styleClasses="z-10"
             >
@@ -173,7 +173,7 @@ export default function AppHeader(): JSX.Element {
             />
           </>
         )}
-        {ENABLE_DATASTAX_LANGFLOW && (
+        {ENABLE_PLENUM_AUTOMATION_BUILDER && (
           <>
             <ShadTooltip content="Docs" side="bottom" styleClasses="z-10">
               <Button

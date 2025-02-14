@@ -3,7 +3,7 @@ import { useLogout } from "@/controllers/API/queries/auth";
 import { CustomFeedbackDialog } from "@/customization/components/custom-feedback-dialog";
 import { CustomHeaderMenuItemsTitle } from "@/customization/components/custom-header-menu-items-title";
 import { CustomProfileIcon } from "@/customization/components/custom-profile-icon";
-import { ENABLE_DATASTAX_LANGFLOW } from "@/customization/feature-flags";
+import { ENABLE_PLENUM_AUTOMATION_BUILDER } from "@/customization/feature-flags";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useAuthStore from "@/stores/authStore";
 import { useDarkStore } from "@/stores/darkStore";
@@ -45,11 +45,11 @@ export const AccountMenu = () => {
             className="h-7 w-7 rounded-lg focus-visible:outline-0"
             data-testid="user-profile-settings"
           >
-            {ENABLE_DATASTAX_LANGFLOW ? <CustomProfileIcon /> : <ProfileIcon />}
+            {ENABLE_PLENUM_AUTOMATION_BUILDER ? <CustomProfileIcon /> : <ProfileIcon />}
           </div>
         </HeaderMenuToggle>
         <HeaderMenuItems position="right">
-          {ENABLE_DATASTAX_LANGFLOW && (
+          {ENABLE_PLENUM_AUTOMATION_BUILDER && (
             <HeaderMenuItemsSection>
               <CustomHeaderMenuItemsTitle />
             </HeaderMenuItemsSection>
@@ -64,9 +64,9 @@ export const AccountMenu = () => {
                   Version {version}
                 </span>
               </div>
-              {!ENABLE_DATASTAX_LANGFLOW && <ThemeButtons />}
+              {!ENABLE_PLENUM_AUTOMATION_BUILDER && <ThemeButtons />}
             </div>
-            {ENABLE_DATASTAX_LANGFLOW ? (
+            {ENABLE_PLENUM_AUTOMATION_BUILDER ? (
               <HeaderMenuItemLink newPage href={`/settings/org/${id}/overview`}>
                 Account Settings
               </HeaderMenuItemLink>
@@ -85,7 +85,7 @@ export const AccountMenu = () => {
                 </span>
               </HeaderMenuItemButton>
             )}
-            {!ENABLE_DATASTAX_LANGFLOW && (
+            {!ENABLE_PLENUM_AUTOMATION_BUILDER && (
               <>
                 {isAdmin && !autoLogin && (
                   <HeaderMenuItemButton onClick={() => navigate("/admin")}>
@@ -99,7 +99,7 @@ export const AccountMenu = () => {
                 )}
               </>
             )}
-            {ENABLE_DATASTAX_LANGFLOW ? (
+            {ENABLE_PLENUM_AUTOMATION_BUILDER ? (
               <HeaderMenuItemButton onClick={() => setIsFeedbackOpen(true)}>
                 <span
                   data-testid="menu_feedback_button"
@@ -117,7 +117,7 @@ export const AccountMenu = () => {
             )}
           </HeaderMenuItemsSection>
           <HeaderMenuItemsSection>
-            {ENABLE_DATASTAX_LANGFLOW ? (
+            {ENABLE_PLENUM_AUTOMATION_BUILDER ? (
               <HeaderMenuItemLink
                 newPage
                 href="https://github.com/langflow-ai/langflow"
@@ -148,7 +148,7 @@ export const AccountMenu = () => {
               </span>
             </HeaderMenuItemLink>
           </HeaderMenuItemsSection>
-          {ENABLE_DATASTAX_LANGFLOW ? (
+          {ENABLE_PLENUM_AUTOMATION_BUILDER ? (
             <HeaderMenuItemsSection>
               <HeaderMenuItemLink href="/session/logout" icon="log-out">
                 Logout

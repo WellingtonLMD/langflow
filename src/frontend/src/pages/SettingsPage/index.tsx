@@ -1,7 +1,7 @@
 import SideBarButtonsComponent from "@/components/core/sidebarComponent";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import {
-  ENABLE_DATASTAX_LANGFLOW,
+  ENABLE_PLENUM_AUTOMATION_BUILDER,
   ENABLE_PROFILE_ICONS,
 } from "@/customization/feature-flags";
 import useAuthStore from "@/stores/authStore";
@@ -70,7 +70,7 @@ export default function SettingsPage(): JSX.Element {
     },
   );
 
-  if (!ENABLE_DATASTAX_LANGFLOW) {
+  if (!ENABLE_PLENUM_AUTOMATION_BUILDER) {
     const langflowItems = [
       {
         title: "Langflow API Keys",

@@ -1,4 +1,4 @@
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import PlenumLogo from "@/assets/PlenumLogo.svg?react";
 import { useLoginUser } from "@/controllers/API/queries/auth";
 import { ENABLE_NEW_LOGO } from "@/customization/feature-flags";
 import { useContext, useState } from "react";
@@ -52,7 +52,7 @@ export default function LoginAdminPage() {
     <div className="flex h-full w-full flex-col items-center justify-center bg-muted">
       <div className="flex w-72 flex-col items-center justify-center gap-2">
         {ENABLE_NEW_LOGO ? (
-          <LangflowLogo
+          <PlenumLogo
             title="Langflow logo"
             className="h-10 w-10 scale-[1.5]"
           />

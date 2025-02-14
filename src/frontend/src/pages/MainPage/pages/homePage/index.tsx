@@ -2,7 +2,7 @@ import PaginatorComponent from "@/components/common/paginatorComponent";
 import CardsWrapComponent from "@/components/core/cardsWrapComponent";
 import { useGetFolderQuery } from "@/controllers/API/queries/folders/use-get-folder";
 import { CustomBanner } from "@/customization/components/custom-banner";
-import { ENABLE_DATASTAX_LANGFLOW } from "@/customization/feature-flags";
+import { ENABLE_PLENUM_AUTOMATION_BUILDER } from "@/customization/feature-flags";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
 import { useFolderStore } from "@/stores/foldersStore";
 import { useCallback, useEffect, useState } from "react";
@@ -87,7 +87,7 @@ const HomePage = ({ type }) => {
         data-testid="cards-wrapper"
       >
         <div className="flex h-full w-full flex-col xl:container">
-          {ENABLE_DATASTAX_LANGFLOW && <CustomBanner />}
+          {ENABLE_PLENUM_AUTOMATION_BUILDER && <CustomBanner />}
 
           {/* mt-10 to mt-8 for Datastax LF */}
           <div className="flex flex-1 flex-col justify-start px-5 pt-10">

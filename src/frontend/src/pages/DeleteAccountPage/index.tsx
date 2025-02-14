@@ -1,4 +1,4 @@
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import PlenumLogo from "@/assets/PlenumLogo.svg?react";
 import { ENABLE_NEW_LOGO } from "@/customization/feature-flags";
 import { useState } from "react";
 import { Button } from "../../components/ui/button";
@@ -20,8 +20,8 @@ export default function DeleteAccountPage() {
     <div className="flex h-full w-full flex-col items-center justify-center bg-muted">
       <div className="flex w-72 flex-col items-center justify-center gap-2">
         {ENABLE_NEW_LOGO ? (
-          <LangflowLogo
-            title="Langflow logo"
+          <PlenumLogo
+            title="Plenum logo"
             className="mb-4 h-10 w-10 scale-[1.5]"
           />
         ) : (
