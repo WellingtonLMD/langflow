@@ -6,7 +6,8 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/node": {},
-    "ghcr.io/dhoeric/features/hadolint:1": {}
+    "ghcr.io/dhoeric/features/hadolint:1": {},
+    "docker-in-docker": "latest"
   },
   "postCreateCommand": "sudo chown -R langflow .venv .mypy_cache src/frontend/node_modules src/frontend/build src/backend/base/langflow/frontend && make install_frontend && make install_backend",
   "customizations": {
