@@ -42,6 +42,11 @@
   },
   "mounts": [
     {
+      "source": "/var/run/docker.sock",
+      "target": "/var/run/docker.sock",
+      "type": "bind"
+    },
+    {
       "source": "${localWorkspaceFolderBasename}-frontend-node_modules",
       "target": "/workspace/src/frontend/node_modules",
       "type": "volume"
