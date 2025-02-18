@@ -6,8 +6,7 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/node": {},
-    "ghcr.io/dhoeric/features/hadolint:1": {},
-    "docker-in-docker": "latest"
+    "ghcr.io/dhoeric/features/hadolint:1": {}
   },
   "postCreateCommand": "sudo chown -R langflow .venv .mypy_cache src/frontend/node_modules src/frontend/build src/backend/base/langflow/frontend && make install_frontend && make install_backend",
   "customizations": {
@@ -42,11 +41,6 @@
     "FRONTEND_START_FLAGS": "--host"
   },
   "mounts": [
-    {
-      "source": "/var/run/docker.sock",
-      "target": "/var/run/docker.sock",
-      "type": "bind"
-    },
     {
       "source": "${localWorkspaceFolderBasename}-frontend-node_modules",
       "target": "/workspace/src/frontend/node_modules",
